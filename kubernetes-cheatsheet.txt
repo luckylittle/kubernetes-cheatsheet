@@ -1,0 +1,89 @@
+/---------------------------------------------------------------\
+|  Author:      Lucian Maly <lucian.maly@oracle.com>            |
+|  Last update: 2016-07-17                                      |
+\---------------------------------------------------------------/
+
+
+PREPARE ENVIRONMENT FOR K8S
+---------------------------
+$ sudo apt-get update
+$ sudo apt-gt install python curl
+$ curl https://sdk.cloud.google.com | bash
+$ gcloud auth login
+$ gcloud config list project
+$ gcloud config set project <PROJECT ID>
+
+
+-----------------------------------------------------------------
+
+INSTALL LATEST K8S VERSION
+--------------------------
+$ curl -sS https://get.k8s.io | bash
+$ $HOME/kubernetes/cluster/kube-up.sh
+By default it will use gce provider
+By default the cluster will have 4 minions
+
+Configuration is stored:
+$ vim $HOME/.kube/config
+
+Binaries by default stored at:
+$ $HOME/kubernetes/cluster
+
+
+-----------------------------------------------------------------
+
+KUBERNETES UI
+-------------
+https://<your-master-IP>/api/v1/proxy/namespaces/kube-system/services/kube-ui
+-summary of the minions, CPU, memory, used disk space, IP addresses
+
+See the credentials for logging in to the above WebUI:
+$ kubectl config view
+
+
+-----------------------------------------------------------------
+
+GRAFANA UI
+----------
+https://<your-master-IP>/api/v1/proxy/namespaces/kube-system/services/monitor-grafana
+-summary of the metrics on the cluster nodes - CPU, memory
+
+
+-----------------------------------------------------------------
+
+SWAGGER
+-------
+https://<your-master-IP>/swagger-ui
+-summary of the K8s RESTful API
+
+i.e.
+https://<your-master-IP>/api/v1/nodes/?pretty=true
+https://<your-master-IP>/api/v1/nodes/?pretty=false
+
+-----------------------------------------------------------------
+
+KUBECTL.SH
+----------
+
+-commands to explore our cluster and the workloads running on it
+$ cd $HOME/kubernetes/cluster
+$ chmod +x kubectl.sh
+# Prepend a dot - the program will look in the current directory first, before searching the rest of the PATH
+$ export PATH=".:$PATH"
+# Append the Kubernetes path to the end:
+$ export PATH=$PATH:/home/$USER/kubernetes/cluster
+# To make changes permanent, add the export to the end of .bashrc in $HOME
+$ ln -s kubectl.sh kubectl
+
+Cluster summary (master, DNS, UI, Grafana, Heapster, InfluxDB) can be viewed by:
+$ kubectl cluster-info
+
+Listing the nodes in our cluster:
+$ kubectl get nodes
+
+List cluster events:
+$ kubectl get events
+
+See services that are running in the cluster:
+$ kubectl get services
+-you will only see one core API/monitoring/logging service called 'kubernetes' at the beginning
