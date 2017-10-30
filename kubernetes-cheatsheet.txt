@@ -110,3 +110,39 @@ spec:
 ```
 
 kubectl create -f my-first-pod.yaml pod "my-first-pod" created
+
+kubectl get pods
+
+Shorthand format "po"
+kubectl get po
+
+kubectl logs my-first-pod -c my-centos --tail=30
+
+kubectl get pods -o wide
+
+# Second POD:
+cat my-first-pod.yaml | sed -e 's/my-first-pod/my-second-pod/' > my-second.pod.yaml
+```
+# cat my-second.pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+    name: my-second-pod
+spec:
+    containers:
+    - name: my-nginx
+      image: nginx
+    - name: my-centos
+      image: centos
+      command: ["/bin/sh", "-c", "while : ;do curl http://localhost:80/;sleep 3; done"]
+```
+
+kubectl create -f my-second.pod.yaml
+
+kubectl get pods
+
+kubectl delete pod my-second-pod
+
+kubectl delete pod my-first-pod
+
+kubectl get pods
