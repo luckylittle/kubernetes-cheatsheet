@@ -4,7 +4,7 @@
 \---------------------------------------------------------------/
 
 
-PREPARE ENVIRONMENT FOR K8S
+# PREPARE ENVIRONMENT FOR K8S
 ---------------------------
 $ sudo apt-get update
 $ sudo apt-gt install python curl
@@ -16,7 +16,7 @@ $ gcloud config set project <PROJECT ID>
 
 -----------------------------------------------------------------
 
-INSTALL LATEST K8S VERSION
+# INSTALL LATEST K8S VERSION
 --------------------------
 $ curl -sS https://get.k8s.io | bash
 $ $HOME/kubernetes/cluster/kube-up.sh
@@ -32,7 +32,7 @@ $ $HOME/kubernetes/cluster
 
 -----------------------------------------------------------------
 
-KUBERNETES UI
+# KUBERNETES UI
 -------------
 https://<your-master-IP>/api/v1/proxy/namespaces/kube-system/services/kube-ui
 -summary of the minions, CPU, memory, used disk space, IP addresses
@@ -43,7 +43,7 @@ $ kubectl config view
 
 -----------------------------------------------------------------
 
-GRAFANA UI
+# GRAFANA UI
 ----------
 https://<your-master-IP>/api/v1/proxy/namespaces/kube-system/services/monitor-grafana
 -summary of the metrics on the cluster nodes - CPU, memory
@@ -51,7 +51,7 @@ https://<your-master-IP>/api/v1/proxy/namespaces/kube-system/services/monitor-gr
 
 -----------------------------------------------------------------
 
-SWAGGER
+# SWAGGER
 -------
 https://<your-master-IP>/swagger-ui
 -summary of the K8s RESTful API
@@ -62,7 +62,7 @@ https://<your-master-IP>/api/v1/nodes/?pretty=false
 
 -----------------------------------------------------------------
 
-KUBECTL.SH
+# KUBECTL.SH
 ----------
 
 -commands to explore our cluster and the workloads running on it
@@ -87,3 +87,6 @@ $ kubectl get events
 See services that are running in the cluster:
 $ kubectl get services
 -you will only see one core API/monitoring/logging service called 'kubernetes' at the beginning
+
+# K8S on AWS
+----------
