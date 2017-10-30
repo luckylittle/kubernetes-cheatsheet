@@ -90,3 +90,23 @@ $ kubectl get services
 
 # K8S on AWS
 ----------
+
+
+# WORKING WITH PODS
+----------
+```
+# cat my-first-pod.yaml
+apiVersion: v1
+kind: Pod
+    metadata:
+name: my-first-pod
+spec:
+    containers:
+    - name: my-nginx
+      image: nginx
+    - name: my-centos
+      image: centos
+      command: ["/bin/sh", "-c", "while : ;do curl http://localhost:80/; sleep 3; done"]
+```
+
+kubectl create -f my-first-pod.yaml pod "my-first-pod" created
