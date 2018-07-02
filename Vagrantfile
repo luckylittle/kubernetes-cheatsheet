@@ -59,6 +59,14 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 sysctl --system
 
+        # IPVS (IP Virtual Server)
+        modprobe -- ip_vs
+        modprobe -- ip_vs_rr
+        modprobe -- ip_vs_wrr
+        modprobe -- ip_vs_sh
+        modprobe -- nf_conntrack_ipv4
+        lsmod | grep -e ipvs -e nf_conntrack_ipv4
+
 echo 'set host name resolution'
 cat >> /etc/hosts <<EOF
 172.31.31.101 node1
@@ -76,6 +84,7 @@ EOF
         sed -i '/swap/s/^/#/' /etc/fstab
         cat /etc/fstab
 
+        mkdir -p /var/lib/docker
         yum install --setopt=obsoletes=0 docker-ce-17.03.1.ce-1.el7.centos docker-ce-selinux-17.03.1.ce-1.el7.centos -y
         groupadd docker
         usermod -aG docker vagrant
@@ -102,15 +111,16 @@ EOF
 
   config.vm.define "node1", primary: true do |master|
     #master.vm.provision :shell, inline: "kubeadm init --pod-network-cidr=10.244.0.0/16"
-    master.vm.provision "shell" do |shell|
+    master.vm.provision "shell", privileged: false do |shell|
       shell.inline = <<-SHELL
-        kubeadm init --pod-network-cidr=10.244.0.0/16
-        su vagrant
+        #kubeadm config images pull
+        sudo kubeadm init --pod-network-cidr=10.244.0.0/16
         mkdir -p $HOME/.kube
         sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
         sudo chown $(id -u):$(id -g) $HOME/.kube/config
-        sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
+        kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
         kubectl get pods --all-namespaces
+        kubectl get nodes
       SHELL
     end
   end
