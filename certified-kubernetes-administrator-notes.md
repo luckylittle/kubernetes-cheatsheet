@@ -75,6 +75,7 @@ Now you can start adding nodes to the cluster. Run this on the cluster(s):
 1. Do everything the same on the worker as on the master (Swap, Docker, SELinux, kubectl...) except for the `kubeadm init`.
 
 2. Paste the "join" command copied from the master to the node(s).
+
 Example:
 
     ```bash
@@ -126,13 +127,17 @@ node3     Ready     <none>    00m       v1.11.0
 
 ### Sheduling
 
-* Use label selectors to schedule Pods.
+* Use label selectors to schedule Pods. (`=`, `==`, `!=`, `in`, `notin`, `exists`)
+
+  * A Pod is the scheduling unit in Kubernetes. It is a logical collection of one or more containers which are always scheduled together.
+
+  * A Pod is the smallest and simplest Kubernetes object. It is the unit of deployment in Kubernetes, which represents a single instance of the application. A Pod is a logical collection of one or more containers, which: Are scheduled together on the same host, share the same network namespace, mount the same external storage (volumes).
+
+  * Labels are key-value pairs that can be attached to any Kubernetes objects (e.g. Pods). Labels are used to organize and select a subset of objects, based on the requirements in place. Many objects can have the same Label(s). Labels do not provide uniqueness to objects.
 
 * Understand the role of DaemonSets.
 
-* Understand how resource limits can affect
-
-* Pod scheduling.
+* Understand how resource limits can affect Pod scheduling.
 
 * Understand how to run multiple schedulers and how to configure Pods to use them.
 
@@ -156,11 +161,17 @@ node3     Ready     <none>    00m       v1.11.0
 
 * Understand Deployments and how to perform rolling updates and rollbacks.
 
+  * Deployment objects provide declarative updates to Pods and ReplicaSets. The DeploymentController is part of the master node's controller manager, and it makes sure that the current state always matches the desired state.
+
+  * A rollout is only triggered when we update the Pods Template for a deployment. Operations like scaling the deployment do not trigger the deployment.
+
 * Know various ways to configure applications.
 
 * Know how to scale applications.
 
 * Understand the primitives necessary to create a self-healing application.
+
+  * Generally, we don't deploy a Pod independently, as it would not be able to re-start itself, if something goes wrong. We always use controllers like ReplicationController(s) and/or ReplicaSet(s) to create and manage Pods.
 
 ### Cluster Maintenance
 
@@ -173,6 +184,43 @@ node3     Ready     <none>    00m       v1.11.0
 ### Security
 
 * Know how to configure authentication and authorization.
+
+  * Client Certificates
+    To enable client certificate authentication, we need to reference a file containing one or more certificate authorities by passing the `--client-ca-file=SOMEFILE` option to the API server. The certificate authorities mentioned in the file would validate the client certificates presented to the API server.
+
+  * Static Token File
+    We can pass a file containing pre-defined bearer tokens with the `--token-auth-file=SOMEFILE` option to the API server. Currently, these tokens would last indefinitely, and they cannot be changed without restarting the API server.
+
+  * Bootstrap Tokens
+    This feature is currently in an alpha status, and is mostly used for bootstrapping a new Kubernetes cluster.
+  
+  * Static Password File
+    It is similar to Static Token File. We can pass a file containing basic authentication details with the `--basic-auth-file=SOMEFILE` option. These credentials would last indefinitely, and passwords cannot be changed without restarting the API server.
+
+  * Service Account Tokens
+    This is an automatically enabled authenticator that uses signed bearer tokens to verify the requests. These tokens get attached to Pods using the ServiceAccount Admission Controller, which allows in-cluster processes to talk to the API server.
+
+  * OpenID Connect Tokens
+    OpenID Connect helps us connect with OAuth 2 providers, such as Azure Active Directory, Salesforce, Google, etc., to offload the authentication to external services.
+
+  * Webhook Token Authentication
+    With Webhook-based authentication, verification of bearer tokens can be offloaded to a remote service.
+
+  * Keystone Password
+    Keystone authentication can be enabled by passing the `--experimental-keystone-url=<AuthURL>` option to the API server, where AuthURL is the Keystone server endpoint.
+
+  * Authenticating Proxy
+    If we want to program additional authentication logic, we can use an authenticating proxy.
+
+  At least two methods should be enabled: the service account tokens authenticator and the user authenticator.
+
+  To enable the ABAC authorizer, we would need to start the API server with the `--authorization-mode=ABAC` and `--authorization-policy-file=PolicyFile.json`.
+
+  Kubernetes can offer authorization decisions to some third-party services, start API server with `--authorization-webhook-config-file=SOME_FILENAME`, where SOME_FILENAME is the configuration of the remote authorization service.
+
+  To enable the RBAC authorizer, we would need to start the API server with the `--authorization-mode=RBAC` option.
+
+  Admission control is used to specify granular access control policies, force the policies using different admission controllers, like ResourceQuota, AlwaysAdmit, DefaultStorageClass, etc. To enable `--admission-control=NamespaceLifecycle,ResourceQuota,PodSecurityPolicy,DefaultStorageClass`.
 
 * Understand Kubernetes security primitives.
 
@@ -214,6 +262,17 @@ node3     Ready     <none>    00m       v1.11.0
 
 * Understand the Kubernetes API primitives.
 
+  * `kubectl proxy`, dahsboard will be available on http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/kubernetes-dashboard:/proxy/#!/overview?namespace=default
+    API paths/endpoints will be visible via `curl 127.0.0.1:8001`
+
+  * Without `kubectl proxy`, you have to:
+
+    ```bash
+    TOKEN=$(kubectl describe secret -n kube-system $(kubectl get secrets -n kube-system | grep default | cut -f1 -d ' ') | grep -E '^token' | cut -f2 -d':' | tr -d '\t' | tr -d " ")
+    APISERVER=$(kubectl config view | grep https | cut -f 2- -d ":" | tr -d " ")
+    curl $APISERVER --header "Authorization: Bearer $TOKEN" --insecure
+    ```
+
 * Understand the Kubernetes cluster architecture.
 
 * Understand Services and other network primitives.
@@ -223,6 +282,12 @@ node3     Ready     <none>    00m       v1.11.0
 * Understand the networking configuration on the cluster nodes.
 
 * Understand Pod networking concepts.
+
+  * Inside a Pod, containers share the network namespaces, so that they can reach to each other via localhost.
+
+  * If we have numerous users whom we would like to organize into teams/projects, we can partition the Kubernetes cluster into sub-clusters using Namespaces. The names of the resources/objects created inside a Namespace are unique, but not across Namespaces:
+
+  `kubectl get namespaces`
 
 * Understand service networking.
 

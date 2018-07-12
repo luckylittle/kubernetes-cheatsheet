@@ -13,7 +13,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc # do the bash autocomplete
 Set which Kubernetes cluster `kubectl` communicates with and modifies configuration information.
 
 ```bash
-kubectl config view # Show Merged kubeconfig settings.
+kubectl config view # Show Merged kubeconfig settings (located in ~/.kube/config)
 
 # use multiple kubeconfig files at the same time and view merged config
 KUBECONFIG=~/.kube/config:~/.kube/kubconfig2 kubectl config view
@@ -89,6 +89,7 @@ EOF
 ```bash
 # Get commands with basic output
 kubectl get services                          # List all services in the namespace
+kubectl get namespaces                        # List all namespaces
 kubectl get pods --all-namespaces             # List all pods in all namespaces
 kubectl get pods -o wide                      # List all pods in the namespace, with more details
 kubectl get deployment my-dep                 # List a particular deployment
