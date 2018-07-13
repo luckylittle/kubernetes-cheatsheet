@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-exec
+spec:
+  containers:
+  - name: liveness
+    image: k8s.gcr.io/busybox
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 3
+      periodSeconds: 5
+
+# HTTP probe example, if it succeeds, the application is considered healthy, otherwise the kubelet would mark it as unhealthy and restart the affected container.
+# livenessProbe:
+#       httpGet:
+#         path: /healthz
+#         port: 8080
+#         httpHeaders:
+#         - name: X-Custom-Header
+#           value: Awesome
+#       initialDelaySeconds: 3
+#       periodSeconds: 3
+
+# TCP socket probe example, if it succeeds, the application is considered healthy, otherwise the kubelet would mark it as unhealthy and restart the affected container.
+# livenessProbe:
+#       tcpSocket:
+#         port: 8080
+#       initialDelaySeconds: 15
+#       periodSeconds: 20
+
+# Readiness probe example, applkication can serve traffic only if certain condition is met
+# readinessProbe:
+#   exec:
+#     command:
+#     - cat
+#     - /tmp/healthy
+#   initialDelaySeconds: 5
+#   periodSeconds: 5

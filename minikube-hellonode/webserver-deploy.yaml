@@ -1,0 +1,26 @@
+apiVersion: apps/v1 # Essentially http://127.0.0.1:8001/apis/apps/v1
+### DEPLOYMENT
+kind: Deployment
+metadata:
+  name: webserver
+  labels:
+    app: nginx
+spec:
+### REPLICASET
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+### PODS
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+
+# Remember, deployment creates Deployment + ReplicaSet + Pods !
