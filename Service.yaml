@@ -1,0 +1,54 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend-svc
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+
+# We are creating a `frontend-svc` Service by selecting all the Pods that have the Label `app` set to the `frontend`.
+# By default, each Service also gets an IP address, which is routable ONLY inside the cluster.
+# In our case, we have 172.17.0.4 and 172.17.0.5 IP addresses for our `frontend-svc` and `db-svc` Services, respectively.
+# The IP address attached to each Service is also known as the `ClusterIP` for that Service.
+# Pods, IP addresses, along with the targetPort is referred to as a Service endpoint (e.g. 10.0.1.3:5000, 10.0.1.4:5000, and 10.0.1.5:5000)
+
+# These ENV are automatically created in the Pod:
+# FRONTEND_SVC_SERVICE_HOST=172.17.0.4
+# FRONTEND_SVC_SERVICE_PORT=5000
+# FRONTEND_SVC_PORT=tcp://172.17.0.4:5000
+# FRONTEND_SVC_PORT_5000_TCP=
+# FRONTEND_SVC_PORT_5000_TCP_PROTO=tcp
+# FRONTEND_SVC_PORT_5000_TCP_PORT=5000
+# FRONTEND_SVC_PORT_5000_TCP_ADDR=172.17.0.4
+
+# These DNS records are automatically created in the Pod:
+# `my-svc` within the same namespace, otherwise `my-svc.my-namespace.svc.cluster.local`
+# So this DNS will be created: frontend-svc.minikube.svc.cluster.local
+
+# Service Types:
+
+# 1. ClusterIP = A Service gets its Virtual IP address using the ClusterIP.
+# That IP address is used for communicating with the Service and is accessible only within the cluster.
+# ClusterIP is the default ServiceType.
+
+# 2. NodePort ServiceType, in addition to creating a ClusterIP, a port from the range 30000-32767 is mapped to the respective Service, from all the worker nodes.
+# For example, if the mapped NodePort is 32233 for the service frontend-svc, then, if we connect to any worker node on port 32233, the node would redirect all the traffic to the assigned ClusterIP - 172.17.0.4.
+
+# 3. LoadBalancer ServiceType:
+# NodePort and ClusterIP Services are automatically created, and the external load balancer will route to them.
+# The Services are exposed at a static port on each worker node.
+# The Service is exposed externally using the underlying cloud provider's load balancer feature.
+# The LoadBalancer ServiceType will only work if the underlying infrastructure supports the automatic creation of Load Balancers and have the respective support in Kubernetes, as is the case with the Google Cloud Platform and AWS. 
+
+# 4. ExternalIP = A Service can be mapped to an ExternalIP address if it can route to one or more of the worker nodes.
+# ExternalIPs are not managed by Kubernetes. The cluster administrators has configured the routing to map the ExternalIP address to one of the nodes.
+# Traffic that is ingressed into the cluster with the ExternalIP (as destination IP) on the Service port, gets routed to one of the the Service endpoints (`frontend-svc`<=>ExternalIP)
+
+# 5. ExternalName
+# ExternalName is a special ServiceType, that has no Selectors and does not define any endpoints.
+# When accessed within the cluster, it returns a CNAME record of an externally configured Service.
+# The primary use case of this ServiceType is to make externally configured Services like my-database.example.com available inside the cluster, using just the name, like my-database, to other Services inside the same Namespace.

@@ -277,6 +277,12 @@ node3     Ready     <none>    00m       v1.11.0
 
 * Understand Services and other network primitives.
 
+  * Service logically groups Pods and a policy to access them. Pods are ephemeral in nature, so if the Pod dies, new Pod will be created with new, unknown IP address.
+
+  * Two methods of discovering the service are supported - ENV and DNS.
+
+  * ServiceType specifies if: it is only accessible within the cluster (ClusterIP), is accessible from within the cluster and the external world (NodePort), or maps to an external entity which resides outside the cluster (LoadBalancer).
+
 ### Networking
 
 * Understand the networking configuration on the cluster nodes.
