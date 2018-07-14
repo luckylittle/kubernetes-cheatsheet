@@ -226,6 +226,12 @@ node3     Ready     <none>    00m       v1.11.0
 
 * Understand Kubernetes security primitives.
 
+  * Create a secret: `kubectl create secret generic my-password --from-literal=password=mysqlpassword`.
+
+  * These commands do not reveal the content of the Secret (Opaque): `kubectl get secret my-password`, `kubectl describe secret my-password`.
+
+  * You can also create Secret using YAML, but it has to be in base64.
+
 * Know to configure network policies.
 
 * Create and manage TLS certificates for cluster components.
