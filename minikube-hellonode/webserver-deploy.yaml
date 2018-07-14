@@ -22,5 +22,13 @@ spec:
         image: nginx:alpine
         ports:
         - containerPort: 80
+### VOLUME
+      #   volumeMounts:
+      #   - name: hostvol
+      #     mountPath: /usr/share/nginx/html
+      # volumes:
+      # - name: hostvol
+      #   hostPath:
+      #     path: /home/docker/vol
 
 # Remember, deployment creates Deployment + ReplicaSet + Pods !

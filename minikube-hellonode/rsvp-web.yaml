@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rsvp
+  labels:
+    app: rsvp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rsvp
+  template:
+    metadata:
+      labels:
+        app: rsvp
+    spec:
+      containers:
+      - name: rsvp-app
+        image: teamcloudyuga/rsvpapp
+        env:
+        - name: MONGODB_HOST
+          value: mongodb # While creating the Deployment for the frontend, we are passing the name of the MongoDB Service, mongodb, as an environment variable, which is expected by our frontend.
+        ports: # Notice that in the ports section we mentioned the containerPort 5000, and given it the web-port name.
+        - containerPort: 5000
+          name: web-port
+
+# We will be using the referenced `web-port` name while creating the Service for the rsvp application.
+# This is useful, as we can change the underlying `containerPort` without making any changes to our Service.
