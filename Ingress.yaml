@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: default
+spec:
+  rules:
+  - host: blue.example.com # This can be also `example.com/blue` (Fan Out)
+    http:
+      paths:
+      - backend:
+          serviceName: webserver-blue-svc
+          servicePort: 80
+  - host: green.example.com # This can be also `example.com/green` (Fan Out)
+    http:
+      paths:
+      - backend:
+          serviceName: webserver-green-svc
+          servicePort: 80
+
+# Name-Based Virtual Hosting Ingress rule.
+# Users requests to both blue.example.com and green.example.com would go to the same Ingress endpoint.
+# They would be forwarded to webserver-blue-svc, and webserver-green-svc, respectively.
+# 
