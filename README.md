@@ -18,6 +18,8 @@ vagrant up
 
 ## Contributors
 
-Lucian Maly <<lucian.maly@oracle.com>>
+Lucian Maly <<lucian@redhat.com>>
+
+--Lucian Maly <<lucian.maly@oracle.com>>--
 
 [@LucianMaly](https://twitter.com/LucianMaly) on Twitter
