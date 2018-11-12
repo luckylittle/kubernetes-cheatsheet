@@ -401,6 +401,8 @@ node3     Ready     <none>    00m       v1.11.0
   * Volume is created when the pod is started and is destroyed when the pod is deleted.
 
   * Volume is attached to a Pod and shared among the containers of that Pod. The Volume has the same life span as the Pod, and it outlives the containers of the Pod - this allows data to be preserved across container restarts.
+  
+  * There is a one-to-one mapping of PVs and PVCs. However, multiple pods in the same project can use the same PVC!
 
   * Types:
   
