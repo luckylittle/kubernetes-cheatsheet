@@ -16,6 +16,10 @@ wget --no-check-certificate https://raw.githubusercontent.com/luckylittle/kubern
 vagrant up
 ```
 
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/luckylittle/kubernetes-cheatsheet.svg)](https://starchart.cc/luckylittle/kubernetes-cheatsheet)
+
 ## Contributors
 
 Lucian Maly <<lucian@redhat.com>> ~~<<lucian.maly@oracle.com>>~~
